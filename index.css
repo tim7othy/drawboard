@@ -8,107 +8,117 @@ html,body {
 }
 header {
   width: 100%;
-  height: 80px;
-  background: RGB(23, 31, 40);
+  height: 50px;
+  background: #fff;
 }
 
 header .logo {
   width: 20%;
-  height: 80px;
-  line-height: 80px;
+  height: 50px;
+  line-height: 50px;
   text-align: center;
   font-size: 30px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  background: RGB(0, 119, 255);
-  color: RGB(255, 255, 255)
+  color: #000;
 }
 
 .content {
   position: absolute;
   width: 100%;
-  top: 80px;
-  bottom: 0;
-}
-
-.project-list-wrapper {
-  float: left;
-  width: 20%;
-  height: 100%;
-  padding: 30px;
-  background: RGB(21, 24, 30) 
-}
-.project-list-wrapper .project-list {
-  list-style: none;
-}
-.project-list-wrapper .project-item {
-  height: 80px;
-  line-height: 80px;
-  text-align: center;
-  border-bottom: 1px solid RGB(89, 94, 102);
-  color: RGB(89, 94, 102);
-}
-
-.board-area {
-  position: relative;
-  float: right;
-  width: 80%;
-  height: 100%;
-  background: RGB(25, 35, 47);
-}
-
-#drawboardWrapper {
-  position: absolute;
-  width: 100%;
   top: 50px;
   bottom: 0;
+  font-size: 0;
 }
 
-#drawboardWrapper > #drawboard_ui_canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 3;
-}
-#drawboardWrapper > #drawboard_main_canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 2;
-}
-#drawboardWrapper > #drawboard_bg_canvas {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1;
+.content > #toolPane {
+  display: inline-block;
+  vertical-align: top;
+  width: 5%;
+  height: 100%;
+  border: 1px solid #EFF2F7;
 }
 
-
-#toolPane {
-  width: 100%;
-  height: 50px;
-  padding: 0 30px;
-  background: RGB(40, 54, 71);
-}
-
-#toolPane > .tool {
-  float: right;
-  width: 50px;
+.content > #toolPane > .tool {
   height: 50px;
   line-height: 50px;
   text-align: center;
 }
 
-#toolPane > [data-name="redo"],
-#toolPane > [data-name="cancel"] {
-  float: left;
-}
-
-#toolPane .iconfont {
-  font-size: 30px;
-  color: RGB(190, 195, 208);
-}
-
-#toolPane .iconfont:hover {
+.content > #toolPane > .tool:hover {
   cursor: pointer;
-  color: RGB(4, 113, 234);
+  background: #EFF2F7;
+}
+
+.content > #toolPane .tool:nth-child(1) {color: #8392A7}
+.content > #toolPane .tool:nth-child(2) {color: #12CE66}
+.content > #toolPane .tool:nth-child(3) {color: #FFC82C}
+.content > #toolPane .tool:nth-child(4) {color: #1FB6FF}
+.content > #toolPane .tool:nth-child(5) {color: #FF7849}
+.content > #toolPane .tool:nth-child(6) {color: #7E5CEF}
+.content > #toolPane .tool:nth-child(7) {color: #425893}
+.content > #toolPane .tool:nth-child(8) {color: #343F4B}
+.content > #toolPane .tool:nth-child(9) {color: #969FAA}
+.content > #toolPane .tool:nth-child(10) {color: #969FAA}
+
+.content > #toolPane .iconfont {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.project-list-wrapper {
+  display: inline-block;
+  width: 15%;
+  height: 100%;
+  vertical-align: top;
+}
+
+.project-list-wrapper .project-item {
+  list-style: none;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+  font-size: 25px;
+}
+
+.board-draw-area {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 80%;
+  height: 100%;
+  background: #EFF2F7;
+}
+
+#drawboard_wrapper {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 10%;
+}
+
+#drawboard_wrapper > #drawboard_ui_canvas {
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 3;
+}
+
+#drawboard_wrapper > #drawboard_main_canvas {
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 2;
+}
+
+#drawboard_wrapper > #drawboard_bg_canvas {
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 1;
+}
+
+
+#drawboard_input {
+  border: none;
 }

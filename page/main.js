@@ -1,1 +1,1 @@
-var board = new DrawBoard("drawboardWrapper")
+var board = new DrawBoard("drawboard_wrapper")

@@ -4,7 +4,6 @@ class DrawBoard {
     this.setupCanvas()
     this.setupBackground()
     this.setupTools()
-    this.setupTextInput()
     this.setupHistory(30)
   }
 
@@ -35,10 +34,6 @@ class DrawBoard {
     // 保存canvas的宽和高
     this.W = mainLayer.width
     this.H = mainLayer.height
-  }
-
-  setupTextInput() {
-    this.input = document.getElementById("drawboard_input")
   }
 
   setupHistory(capacity) {
@@ -96,7 +91,7 @@ class DrawBoard {
     var bgCtx = this.bgCtx
     bgCtx.save()
     bgCtx.strokeStyle = "#369"
-    bgCtx.fillStyle = "RGB(4, 19, 33)"
+    bgCtx.fillStyle = "#fff"
     bgCtx.lineWidth = 1
     bgCtx.fillRect(0, 0, this.W, this.H)
     var w = this.gridWidth || 20
@@ -154,12 +149,5 @@ class DrawBoard {
     } else if (toolType === REDO) {
       this.redo()
     }
-  }
-
-  mount() {
-    // 添加用于绘制文本框的input元素
-    var input = `<input id="drawboard_input" type="text" style="z-index=-1">`
-    var parent = document.getElementById(this.parentId)
-    parent.insertAdjacentHTML("beforeend", input)
   }
 }

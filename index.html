@@ -11,34 +11,33 @@
 <body>
     <header>
       <div class="logo">Mu Board</div>
-      <div class="search-bar"></div>
+      <div class="publish-btn"></div>
     </header>
     <div class="content">
-      <sidebar class="project-list-wrapper">
+      <div id="toolPane">
+        <div data-name="pen" class="tool"><span class="iconfont icon-pencil"></span></div>
+        <div data-name="line" class="tool"><span class="iconfont icon-Line"></span></div>
+        <div data-name="rect" class="tool"><span class="iconfont icon-square"></span></div>
+        <div data-name="circle" class="tool"><span class="iconfont icon-circle"></span></div>
+        <div data-name="text" class="tool"><span class="iconfont icon-fontnormal"></span></div>
+        <div data-name="eraser" class="tool"><span class="iconfont icon-Rubber"></span></div>
+        <div data-name="clear" class="tool"><span class="iconfont icon-custom-clear"></span></div>
+        <div data-name="download" class="tool"><span class="iconfont icon-Clouddownload"></span></div>
+        <div data-name="cancel" class="tool"><span class="iconfont icon-cancel1f"></span></div>
+        <div data-name="redo" class="tool"><span class="iconfont icon-redo"></span></div>
+      </div>
+      <div class="project-list-wrapper">
         <ul class="project-list">
           <li class="project-item">Task1</li>
           <li class="project-item">Task2</li>
           <li class="project-item">Task3</li>
           <li class="project-item">Task4</li>
         </ul>
-      </sidebar>
-      <div class="board-area">
-        <div id="toolPane">
-          <div data-name="cancel" class="tool"><span class="iconfont icon-cancel1f"></span></div>
-          <div data-name="redo" class="tool"><span class="iconfont icon-redo"></span></div>
-          <div data-name="download" class="tool"><span class="iconfont icon-Clouddownload"></span></div>
-          <div data-name="clear" class="tool"><span class="iconfont icon-custom-clear"></span></div>
-          <div data-name="eraser" class="tool"><span class="iconfont icon-Rubber"></span></div>
-          <div data-name="text" class="tool"><span class="iconfont icon-fontnormal"></span></div>
-          <div data-name="color" class="tool"><span class="iconfont icon-bucket"></span></div>
-          <div data-name="circle" class="tool"><span class="iconfont icon-circle"></span></div>
-          <div data-name="rect" class="tool"><span class="iconfont icon-square"></span></div>
-          <div data-name="line" class="tool"><span class="iconfont icon-Line"></span></div>
-          <div data-name="pen" class="tool"><span class="iconfont icon-pencil"></span></div>
-        </div>
-        <div id="drawboardWrapper"></div>
-        <div class="detail"></div>
       </div>
+      <div class="board-draw-area">
+        <div id="drawboard_wrapper"></div>
+      </div>
+      <div class="board-details-wrapper"></div>
     </div>
   <script src="./utils/utils.js"></script>
   <script src="./common/constants.js"></script>

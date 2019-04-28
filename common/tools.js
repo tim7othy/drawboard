@@ -1,7 +1,7 @@
 class Tool {
   constructor(board) {
     this.board = board
-    this.color = "#fff"
+    this.color = "#000"
     this.lineWidth = 1.5
     this.fontsize = 25
     this.dashOffset = 0

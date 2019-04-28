@@ -14,25 +14,47 @@ class ProjectList {
       this.infoElement.classList.add("active")
       return
     }
-    for (var k in Object.keys(projects)) {
+    this.infoElement.classList.remove("active")
+    projects = JSON.parse(projects)
+    for (var k of Object.keys(projects)) {
       var p = projects[k]
       this.projects.set(k, p)
-      this.infoElement.classList.remove("active")
       this.parentElement.insertAdjacentHTML("beforeend", `
-        <li data-projectid="${p.id}" class="project-item">${p.name}</li> 
+        <li data-projectid="${p.id}" class="project-item">
+          <img class="project-thumb" src="${p.dataURL}"> 
+          <div class="project-operations">
+            <span>下载</span>
+            <span>删除</span>
+          </div>
+        </li> 
       `)
     }
+  }
+
+  saveLocal() {
+    var obj = {}
+    for (var [k, v] of this.projects.entries()) {
+      obj[k] = v
+    }
+    localStorage.setItem("drawboard_projects", JSON.stringify(obj))
   }
 
   bindEvents() {
     window.eventbus.on("save_project", (p) => {
       this.projects.set(p.id, p)
+      this.saveLocal()
       var lst = this.infoElement.classList
       if (lst.contains("active")) {
         lst.remove("active")
       }
       this.parentElement.insertAdjacentHTML("beforeend", `
-        <li data-projectid="${p.id}" class="project-item">${p.name}</li> 
+        <li data-projectid="${p.id}" class="project-item">
+          <img class="project-thumb" src="${p.dataURL}"> 
+          <div class="project-operations">
+            <span>下载</span>
+            <span>删除</span>
+          </div>
+        </li> 
       `)
     })
     this.parentElement.addEventListener("click", (ev) => {

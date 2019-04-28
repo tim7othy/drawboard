@@ -16,7 +16,6 @@ class DrawBoard {
       var dataURL = this.mainCanvas.toDataURL()
       var project = {
         id: r,
-        name: r,
         dataURL: dataURL
       }
       window.eventbus.emit("save_project", project)

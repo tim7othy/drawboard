@@ -95,18 +95,24 @@ header .publish-btn:hover {
   width: 15%;
   height: 100%;
   vertical-align: top;
+  overflow: auto;
 }
 
-.project-list .project-item {
+.project-list > .project-item {
   list-style: none;
-  height: 60px;
-  line-height: 60px;
   text-align: center;
-  font-size: 15px;
+  padding: 10px;
 }
-.project-list .project-item:hover  {
+.project-list > .project-item:hover  {
   cursor: pointer;
   background: RGB(239, 242, 247)
+}
+
+.project-list > .project-item > .project-thumb {
+  width: 95%;
+  border: 1px solid #1FB6FF;
+  border-radius: 8px;
+  box-shadow: 2px 2px 2px #367ebd;
 }
 
 .project-list-head {
@@ -135,6 +141,7 @@ header .publish-btn:hover {
   font-size: 15px;
   text-align: center;
 }
+
 
 .board-draw-area {
   position: relative;

@@ -1,10 +1,6 @@
 class Tool {
   constructor(board) {
     this.board = board
-    this.color = "#000"
-    this.lineWidth = 1.5
-    this.fontsize = 25
-    this.dashOffset = 0
   }
 
   install() {
@@ -51,8 +47,8 @@ class Tool {
 
   drawLine(ctx, pos1, pos2) {
     ctx.save()
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = this.color
+    ctx.lineWidth = this.board.lineWidth
+    ctx.strokeStyle = this.board.color
     ctx.beginPath()
     ctx.moveTo(pos1.x, pos1.y)
     ctx.lineTo(pos2.x, pos2.y)
@@ -64,8 +60,8 @@ class Tool {
     var w = pos2.x - pos1.x
     var h = pos2.y - pos1.y
     ctx.save()
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = this.color
+    ctx.lineWidth = this.board.lineWidth
+    ctx.strokeStyle = this.board.color
     if (options && options.dashed) {
       ctx.setLineDash([5, 15])
       if (options.flow) {
@@ -88,8 +84,8 @@ class Tool {
 
   drawCircle(ctx, center, radius) {
     ctx.save()
-    ctx.lineWidth = this.lineWidth
-    ctx.strokeStyle = this.color
+    ctx.lineWidth = this.board.lineWidth
+    ctx.strokeStyle = this.board.color
     ctx.beginPath()
     ctx.arc(center.x, center.y, radius, 0, Math.PI * 2)
     ctx.stroke()
@@ -186,17 +182,17 @@ class Eraser extends Tool {
 
   onMouseDown(ev) {
     super.onMouseDown(ev)
-    var eraserWidth = 20
-    var eraserHeight = 20
+    var eraserWidth = this.board.eraserSize
+    var eraserHeight = this.board.eraserSize
     var x = this.mouseDownPos.x - eraserWidth / 2
     var y = this.mouseDownPos.y - eraserHeight / 2
-    this.board.mainCtx.clearRect(x, y, 20, 20)
+    this.board.mainCtx.clearRect(x, y, eraserWidth, eraserHeight)
   }
 
   onMouseMove(ev) {
     super.onMouseMove(ev)
-    var eraserWidth = 20
-    var eraserHeight = 20
+    var eraserWidth = this.board.eraserSize
+    var eraserHeight = this.board.eraserSize
     var x = this.mouseMovePos.x - eraserWidth / 2
     var y = this.mouseMovePos.y - eraserHeight / 2
     this.drawEraserBorder(x, y, eraserWidth, eraserHeight)
@@ -260,15 +256,12 @@ class Circle extends Tool {
 class Text extends Tool {
   constructor(board) {
     super(board)
-    this.textWidth = 300
-    this.textHeight = 200
-    this.fontsize = 25
     this.setupInput()
   }
 
   setupInput() {
     // 生成一个隐藏的输入框挂载到页面上
-    var input = `<input id="drawboard_input" type="text" style="z-index:-1">`
+    var input = `<input id="drawboard_input" type="text" style="display:inline-block;height:0;">`
     document.body.insertAdjacentHTML("beforeend", input)
     this.input = document.getElementById("drawboard_input")
     this.input.blur()
@@ -286,15 +279,15 @@ class Text extends Tool {
     var ctx = this.board.uiCtx
     ctx.clearRect(0, 0, this.board.W, this.board.H)
     ctx.save()
-    ctx.font = `${this.fontsize}px sans-serif`;
-    ctx.fillStyle = this.color
+    ctx.font = `${this.board.fontSize}px sans-serif`;
+    ctx.fillStyle = this.board.color
     var lines = []
     var line = ""
     var headIndex = 0
     for (var i = 0; i < text.length; i++) {
       line += text[i]
       var obj = ctx.measureText(line)
-      if (obj.width > (this.textWidth - this.fontsize)) {
+      if (obj.width > (this.board.textWidth - this.board.fontSize)) {
         lines.push(text.substring(headIndex, i))
         line = ""
         headIndex = i
@@ -304,8 +297,8 @@ class Text extends Tool {
       lines.push(line)
     }
     for (var j = 0; j < lines.length; j++) {
-      if ((j+1)*this.fontsize < this.textHeight) {
-        ctx.fillText(lines[j], pos.x, pos.y + (j + 1) * this.fontsize)
+      if ((j+1)*this.board.fontSize < this.board.textHeight) {
+        ctx.fillText(lines[j], pos.x, pos.y + (j + 1) * this.board.fontSize)
       }
     }
     ctx.restore()
@@ -313,8 +306,8 @@ class Text extends Tool {
 
   drawTextarea(pos) {
     var pos2 = {
-      x: pos.x + this.textWidth,
-      y: pos.y + this.textHeight
+      x: pos.x + this.board.textWidth,
+      y: pos.y + this.board.textHeight
     }
     this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
     this.drawRect(this.board.uiCtx, pos, pos2, {dashed: true, flow: true})

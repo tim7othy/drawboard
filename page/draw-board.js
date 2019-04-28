@@ -2,6 +2,7 @@ class DrawBoard {
   constructor(parentId) {
     this.parentId = parentId
     this.setupCanvas()
+    this.setupConfig()
     this.setupBackground()
     this.setupTools()
     this.setupHistory(30)
@@ -34,6 +35,22 @@ class DrawBoard {
     // 保存canvas的宽和高
     this.W = mainLayer.width
     this.H = mainLayer.height
+  }
+
+  setupConfig() {
+    this.lineWidth = 1
+    this.color = "#000"
+    this.textWidth = 200
+    this.textHeight = 100
+    this.fontSize = 15 
+    this.eraserSize = 20
+    var eb = window.eventbus
+    eb.on("board_line_width_change", (value) => {this.lineWidth = parseInt(value)})
+    eb.on("board_color_change", (value) => {this.color = value})
+    eb.on("board_text_width_change", (value) => {this.textWidth = parseInt(value)})
+    eb.on("board_text_height_change", (value) => {this.textHeight = parseInt(value)})
+    eb.on("board_font_size_change", (value) => {this.fontSize = parseInt(value)})
+    eb.on("board_eraser_size_change", (value) => {this.eraserSize = parseInt(value)})
   }
 
   setupHistory(capacity) {
@@ -92,21 +109,22 @@ class DrawBoard {
     bgCtx.save()
     bgCtx.strokeStyle = "#369"
     bgCtx.fillStyle = "#fff"
-    bgCtx.lineWidth = 1
     bgCtx.fillRect(0, 0, this.W, this.H)
-    var w = this.gridWidth || 20
-    var h = this.gridHeight || 20
-    var cols = Math.floor(this.W / w)
-    var rows = Math.floor(this.H / h)
-    for (var i = 0; i <= cols; i++) {
-      bgCtx.moveTo(w*i, 0)
-      bgCtx.lineTo(w*i, this.H)
-    }
-    for (var i = 0; i <= rows; i++) {
-      bgCtx.moveTo(0, h*i)
-      bgCtx.lineTo(this.W, h*i)
-    }
-    bgCtx.stroke()
+    // bgCtx.lineWidth = 1
+    // bgCtx.fillRect(0, 0, this.W, this.H)
+    // var w = this.gridWidth || 20
+    // var h = this.gridHeight || 20
+    // var cols = Math.floor(this.W / w)
+    // var rows = Math.floor(this.H / h)
+    // for (var i = 0; i <= cols; i++) {
+    //   bgCtx.moveTo(w*i, 0)
+    //   bgCtx.lineTo(w*i, this.H)
+    // }
+    // for (var i = 0; i <= rows; i++) {
+    //   bgCtx.moveTo(0, h*i)
+    //   bgCtx.lineTo(this.W, h*i)
+    // }
+    // bgCtx.stroke()
     bgCtx.restore()
   }
 

@@ -10,9 +10,17 @@ header {
   width: 100%;
   height: 50px;
   background: #fff;
+  border-bottom: 1px solid #EFF2F7;
+}
+
+header::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 
 header .logo {
+  float: left;
   width: 20%;
   height: 50px;
   line-height: 50px;
@@ -22,6 +30,23 @@ header .logo {
   color: #000;
 }
 
+header .publish-btn {
+  float: right;
+  width: 80px;
+  height: 35px;
+  border-radius: 15px;
+  margin-top: 5px;
+  margin-right: 60px;
+  text-align: center;
+  line-height: 35px;
+  color: #fff;
+  background: #4364FE;
+  cursor: pointer;
+}
+
+header .publish-btn:hover {
+  background: #425893;
+}
 .content {
   position: absolute;
   width: 100%;
@@ -35,7 +60,7 @@ header .logo {
   vertical-align: top;
   width: 5%;
   height: 100%;
-  border: 1px solid #EFF2F7;
+  border-right: 1px solid #EFF2F7;
 }
 
 .content > #toolPane > .tool {
@@ -84,17 +109,17 @@ header .logo {
   position: relative;
   display: inline-block;
   vertical-align: top;
-  width: 80%;
+  width: 60%;
   height: 100%;
   background: #EFF2F7;
 }
 
 #drawboard_wrapper {
   position: absolute;
-  width: 80%;
-  height: 80%;
-  left: 10%;
-  top: 10%;
+  width: 90%;
+  height: 90%;
+  margin-left: 5%;
+  margin-top: 5%;
 }
 
 #drawboard_wrapper > #drawboard_ui_canvas {
@@ -118,7 +143,91 @@ header .logo {
   z-index: 1;
 }
 
-
 #drawboard_input {
   border: none;
+}
+
+.board-details-wrapper {
+  display: inline-block;
+  vertical-align: top;
+  width: 20%;
+  height: 100%;
+}
+
+.board-detail {
+  font-size: 15px;
+}
+
+.board-detail-head {
+  height: 30px;
+  line-height: 30px;
+  padding-left: 20px;
+  color: RGB(150, 159, 170);
+  background: #F9FAFC;
+}
+
+.board-detail-body {
+  padding: 20px;
+  color: RGB(150, 159, 170);
+}
+
+
+/* input样式自定义 */
+
+input[type=color] {
+  display: inline-block;
+  height: 30px;
+  width: 100%;
+  margin: 18px 0;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
 }

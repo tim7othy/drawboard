@@ -11,7 +11,7 @@
 <body>
     <header>
       <div class="logo">Mu Board</div>
-      <div class="publish-btn"></div>
+      <div class="publish-btn">保存</div>
     </header>
     <div class="content">
       <div id="toolPane">
@@ -37,13 +37,53 @@
       <div class="board-draw-area">
         <div id="drawboard_wrapper"></div>
       </div>
-      <div class="board-details-wrapper"></div>
+      <div class="board-details-wrapper">
+        <div class="board-detail">
+          <div class="board-detail-head">外观参数</div>
+          <div class="board-detail-body">
+            <form>
+              <label for="board_line_width">线宽</label>
+              <input id="board_line_width" type="range" value="1" min="1" max="20">
+              <br>
+              <label for="board_color">颜色</label>
+              <input id="board_color" type="color">
+              <br>
+            </form>
+          </div>
+        </div>
+        <div class="board-detail">
+          <div class="board-detail-head">文本参数</div>
+          <div class="board-detail-body">
+            <form>
+              <label for="board_text_width">文本框宽度</label>
+              <input id="board_text_width" type="range" value="200" min="50" max="500">
+              <br>
+              <label for="board_text_height">文本框高度</label>
+              <input id="board_text_height" type="range" value="100" min="30" max="400">
+              <br>
+              <label for="board_font_size">文字大小</label>
+              <input id="board_font_size" type="range" value="15" min="12" max="30">
+              <br>
+            </form>
+          </div>
+        </div>
+        <div class="board-detail">
+          <div class="board-detail-head">橡皮参数</div>
+          <div class="board-detail-body">
+            <form>
+              <label for="board_eraser_size">橡皮大小</label>
+              <input id="board_eraser_size" type="range" value="20" min="1" max="100">
+              <br>
+            </form>
+          </div>
+        </div>
     </div>
   <script src="./utils/utils.js"></script>
   <script src="./common/constants.js"></script>
   <script src="./common/canvas.js"></script>
   <script src="./common/event-bus.js"></script>
   <script src="./common/tools.js"></script>
+  <script src="./page/board-config.js"></script>
   <script src="./page/tool-pane.js"></script>
   <script src="./page/draw-board.js"></script>
   <script src="./page/main.js"></script>

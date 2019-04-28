@@ -6,6 +6,32 @@ class DrawBoard {
     this.setupBackground()
     this.setupTools()
     this.setupHistory(30)
+    this.bindEvents()
+  }
+
+  bindEvents() {
+    var saveBtn = document.querySelector(".publish-btn")
+    saveBtn.addEventListener("click", () => {
+      var r = getRandom()
+      var dataURL = this.mainCanvas.toDataURL()
+      var project = {
+        id: r,
+        name: r,
+        dataURL: dataURL
+      }
+      window.eventbus.emit("save_project", project)
+    })
+
+    window.eventbus.on("load_project", (p) => {
+      var img = new Image()
+      img.onload = () => {
+        this.mainCtx.clearRect(0, 0, this.W, this.H)
+        this.uiCtx.clearRect(0, 0, this.W, this.H)
+        this.mainCtx.drawImage(img, 0, 0)
+        this.setupHistory()
+      }
+      img.src = p.dataURL
+    })
   }
 
   setupCanvas() {
@@ -169,3 +195,5 @@ class DrawBoard {
     }
   }
 }
+
+new DrawBoard("drawboard_wrapper")

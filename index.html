@@ -26,14 +26,14 @@
         <div data-name="cancel" class="tool"><span class="iconfont icon-cancel1f"></span></div>
         <div data-name="redo" class="tool"><span class="iconfont icon-redo"></span></div>
       </div>
-      <div class="project-list-wrapper">
-        <ul class="project-list">
-          <li class="project-item">Task1</li>
-          <li class="project-item">Task2</li>
-          <li class="project-item">Task3</li>
-          <li class="project-item">Task4</li>
-        </ul>
-      </div>
+      <ul id="board_project_list" class="project-list">
+        <li class="project-list-head">画布项目</li>
+        <li class="project-list-info active">您还没有保存过画布项目</li>
+        <!-- <li class="project-item">Task1</li>
+        <li class="project-item">Task2</li>
+        <li class="project-item">Task3</li>
+        <li class="project-item">Task4</li> -->
+      </ul>
       <div class="board-draw-area">
         <div id="drawboard_wrapper"></div>
       </div>
@@ -85,7 +85,7 @@
   <script src="./common/tools.js"></script>
   <script src="./page/board-config.js"></script>
   <script src="./page/tool-pane.js"></script>
+  <script src="./page/project-list.js"></script>
   <script src="./page/draw-board.js"></script>
-  <script src="./page/main.js"></script>
 </body>
 </html>

@@ -159,7 +159,6 @@ class Rect extends Tool {
     if (!this.isMouseDown) {
       return
     }
-    log(this.board)
     this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
     this.drawRect(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
   }
@@ -264,9 +263,25 @@ class Text extends Tool {
     this.textWidth = 300
     this.textHeight = 200
     this.fontsize = 25
-    this.inputHandler = (ev) => { this.onInput(ev) }
+    this.setupInput()
+  }
+
+  setupInput() {
+    // 生成一个隐藏的输入框挂载到页面上
+    var input = `<input id="drawboard_input" type="text" style="z-index:-1">`
+    document.body.insertAdjacentHTML("beforeend", input)
+    this.input = document.getElementById("drawboard_input")
+    this.input.blur()
+
+    // 只有在画布上添加输入框后才会触发输入框的focus和input事件
+    this.input.addEventListener("input", (ev) => { this.onInput(ev) })
   }
   
+  onInput(ev) {
+    this.value = this.input.value
+    this.drawText(this.mouseUpPos, this.value)
+  }
+
   drawText(pos, text) {
     var ctx = this.board.uiCtx
     ctx.clearRect(0, 0, this.board.W, this.board.H)
@@ -305,23 +320,19 @@ class Text extends Tool {
     this.drawRect(this.board.uiCtx, pos, pos2, {dashed: true, flow: true})
   }
 
-  onInput(ev) {
-    this.value = this.board.input.value
-    this.drawText(this.mouseUpPos, this.value)
-  }
 
   finishInput() {
     // 去掉文本框的虚线框
     // this.board.cacel()
     this.drawOn().then(() => {
-      this.board.input.value = ""
+      this.input.value = ""
       this.drawTextarea(this.mouseDownPos)
     })
   }
 
   onMouseDown(ev) {
     super.onMouseDown(ev)
-    if (this.board.input.value !== "") {
+    if (this.input.value !== "") {
       this.finishInput()
     } else {
       this.drawTextarea(this.mouseDownPos)
@@ -340,7 +351,6 @@ class Text extends Tool {
     super.onMouseUp(ev)
     this.drawTextarea(this.mouseUpPos)
     this.drawOn()
-    this.board.input.focus()
-    this.board.input.addEventListener("input", this.inputHandler)
+    this.input.focus()
   }
 }

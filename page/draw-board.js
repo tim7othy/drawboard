@@ -124,40 +124,36 @@ class DrawBoard {
       [CIRCLE, new Circle(this)],
       [TEXT, new Text(this)]
     ])
+    // 默认工具为画笔
     this.tool = this.tools.get(PEN)
+    // 在Dom节点上绑定当前工具相关事件
     this.tool.install()
+
+    window.eventbus.on("switch-tool", (toolType) => { this.switchTool(toolType) })
     
-    var toolPane = document.getElementById("toolPane")
-    toolPane.addEventListener("click", (ev) => {
-      // 代理每个按钮的点击事件
-      var elem = ev.target
-      while (elem.classList[0] != "tool") {
-        if (elem.id === "toolPane") {
-          return
-        }
-        elem = elem.parentElement
-      }
-      // 根据点击的按钮包含的工具的类型，切换当前使用的工具
-      var toolType = elem.dataset.name
-      var tool = this.tools.get(toolType)
-      if (tool && toolType != this.tool.toolType) {
-        this.tool.unInstall()
-        this.tool = tool
-        this.tool.install()
-      } else if (toolType === CLEAR){
-        this.mainCtx.clearRect(0, 0, this.W, this.H)
-      } else if (toolType === DOWNLOAD) {
-        var image = this.mainCanvas.toDataURL("image/png")
-        var save_link = document.createElement('a');
-        save_link.href = image;
-        save_link.download = new Date().toUTCString() + '.png';
-        save_link.click()
-      } else if (toolType === CANCEL) {
-        this.cancel()
-      } else if (toolType === REDO) {
-        this.redo()
-      }
-    })
+  }
+
+  switchTool(toolType) {
+    var tool = this.tools.get(toolType)
+    if (tool && toolType != this.tool.toolType) {
+      // 取消当前工具在dom上绑定的事件
+      this.tool.unInstall()
+      // 切换工具
+      this.tool = tool
+      this.tool.install()
+    } else if (toolType === CLEAR){
+      this.mainCtx.clearRect(0, 0, this.W, this.H)
+    } else if (toolType === DOWNLOAD) {
+      var image = this.mainCanvas.toDataURL("image/png")
+      var save_link = document.createElement('a');
+      save_link.href = image;
+      save_link.download = new Date().toUTCString() + '.png';
+      save_link.click()
+    } else if (toolType === CANCEL) {
+      this.cancel()
+    } else if (toolType === REDO) {
+      this.redo()
+    }
   }
 
   mount() {

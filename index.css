@@ -103,7 +103,9 @@ header .publish-btn:hover {
   text-align: center;
   padding: 10px;
 }
-.project-list > .project-item:hover  {
+.project-list > .project-item:hover,
+.project-list > .project-item.active
+{
   cursor: pointer;
   background: RGB(239, 242, 247)
 }

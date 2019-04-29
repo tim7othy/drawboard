@@ -1,7 +1,5 @@
-- [x] 添加一个蒙版ui-layer绘制变动频繁，与用户交互的canvas
-- [x] mouseup时将蒙版canvas图像绘制到真实canvas
-- [x] 给Canvas增加一个addLayer方法，用于添加canvas，方便离屏渲染
-- [x] 设置不同工具的类，tooltype属性表示工具类型
-- [x] 每个工具类有bindEvents绑定鼠标事件、unbindEvents点击切换工具时触发解绑鼠标事件、draw等方法
-- [] Canvas类中使用Map保存tooltype到实际类的绑定
-- [] 为Canvas添加Rect、Circle等方法
+- [ ] 修改history存储方式为deque
+- [ ] history存储内容改为command
+- [ ] 添加删除项目和播放项目按钮和事件
+- [ ] 修复橡皮擦bug
+- [ ] 修复文本框bug

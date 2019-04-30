@@ -10,7 +10,7 @@ header {
   width: 100%;
   height: 80px;
   background: #fff;
-  border-bottom: 1px solid #EFF2F7;
+  border-bottom: 15px solid #EFF2F7;
 }
 
 header::after {
@@ -22,8 +22,8 @@ header::after {
 header .logo {
   float: left;
   width: 20%;
-  height: 80px;
-  line-height: 80px;
+  height: 65px;
+  line-height: 65px;
   text-align: center;
   font-size: 30px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -35,7 +35,7 @@ header .publish-btn {
   width: 5%;
   height: 40px;
   border-radius: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-right: 2%;
   text-align: center;
   line-height: 35px;
@@ -53,7 +53,7 @@ header .delete-btn {
   width: 5%;
   height: 40px;
   border-radius: 20px;
-  margin-top: 20px;
+  margin-top: 10px;
   margin-right: 8%;
   text-align: center;
   line-height: 35px;
@@ -175,9 +175,8 @@ header .delete-btn:hover {
 #drawboard_wrapper {
   position: absolute;
   width: 96%;
-  height: 96%;
+  height: 100%;
   margin-left: 2%;
-  margin-top: 2%;
 }
 
 #drawboard_wrapper > #drawboard_ui_canvas {

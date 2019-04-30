@@ -332,7 +332,10 @@ class Text extends Tool {
     const offsetY = this.board.fontSize * 0.2
     var arrowX = offsetX + pos.x + lines[lines.length - 1].length * this.board.fontSize
     var arrowY = offsetY + pos.y + (lines.length - 1) * this.board.fontSize
-    ctx.fillRect(arrowX, arrowY, 1, this.board.fontSize)
+    // 光标需要重新绘制，同一层的文本框也需要
+    this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
+    this.drawTextarea(this.textareaPos)
+    this.board.assistCtx.fillRect(arrowX, arrowY, 1, this.board.fontSize)
     ctx.restore()
   }
 

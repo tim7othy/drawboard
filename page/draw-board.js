@@ -80,7 +80,9 @@ class DrawBoard {
 
   setupHistory(capacity) {
     this.history = {
-      currIndex: -1,
+      head: 0,
+      tail: 0,
+      curr: 0,
       capacity: capacity,
       queue: Array(capacity)
     }
@@ -88,20 +90,24 @@ class DrawBoard {
 
   setHistory(item) {
     var h = this.history
-    h.currIndex++
-    if (h.currIndex < h.capacity) {
-      h.queue[h.currIndex] = item
+    var next = (h.curr + 1) % (h.capacity - 1)
+    if (next !== h.head) {
+      h.queue[next] = item
     } else {
-      h.queue.shift()
-      h.queue.push(item)
+      this.baseDataURL = h.queue[next]
+      h.queue[next] = item
+      h.head = (h.head + 1) % (h.capacity - 1)
     }
+    h.curr = next
+    h.tail = next
   }
 
   cancel() {
     var h = this.history
-    h.currIndex--
-    if (h.currIndex >= 0) {
-      var lastDataURL = h.queue[h.currIndex]
+    if (h.curr === h.head) return
+    var next = h.curr - 1 >= 0 ? h.curr - 1 : h.capacity - 1
+    if (next !== h.head) {
+      var lastDataURL = h.queue[next]
       var img = new Image()
       img.onload = () => {
         this.mainCtx.clearRect(0, 0, this.W, this.H)
@@ -110,23 +116,22 @@ class DrawBoard {
       img.src = lastDataURL
     } else {
       this.mainCtx.clearRect(0, 0, this.W, this.H)
-      h.currIndex = -1
     }
+    h.curr = next
   }
 
   redo() {
     var h = this.history
-    var nextIndex = h.currIndex + 1
-    if (nextIndex < h.capacity && h.queue[nextIndex]) {
-      var nextDataURL = h.queue[nextIndex]
-      var img = new Image()
-      img.onload = () => {
-        this.mainCtx.clearRect(0, 0, this.W, this.H)
-        this.mainCtx.drawImage(img, 0, 0)
-      }
-      img.src = nextDataURL
-      h.currIndex = nextIndex
+    if (h.curr === h.tail) return
+    var next = (h.curr + 1) % (h.capacity - 1)
+    h.curr = next
+    var nextDataURL = h.queue[next]
+    var img = new Image()
+    img.onload = () => {
+      this.mainCtx.clearRect(0, 0, this.W, this.H)
+      this.mainCtx.drawImage(img, 0, 0)
     }
+    img.src = nextDataURL
   }
 
   setupBackground() {

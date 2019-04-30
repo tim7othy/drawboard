@@ -156,13 +156,20 @@ header .publish-btn:hover {
 
 #drawboard_wrapper {
   position: absolute;
-  width: 90%;
-  height: 90%;
-  margin-left: 5%;
-  margin-top: 5%;
+  width: 96%;
+  height: 96%;
+  margin-left: 2%;
+  margin-top: 2%;
 }
 
 #drawboard_wrapper > #drawboard_ui_canvas {
+  position: absolute;
+  left:0;
+  top:0;
+  z-index: 4;
+}
+
+#drawboard_wrapper > #drawboard_assist_canvas {
   position: absolute;
   left:0;
   top:0;

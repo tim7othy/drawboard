@@ -42,6 +42,14 @@ class DrawBoard {
     this.uiCanvas = uiLayer.canvasElement
     this.uiCtx = uiLayer.canvasContext
 
+    // 绘制控制图形的辅助线的canvas层
+    var assistLayer = new Canvas({
+      id: "drawboard_assist_canvas",
+      parentId: this.parentId
+    })
+    this.assistCanvas = assistLayer.canvasElement
+    this.assistCtx = assistLayer.canvasContext
+
     // 绘制主要画面的canvas层
     var mainLayer = new Canvas({
       id: "drawboard_main_canvas",

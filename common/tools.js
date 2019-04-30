@@ -10,6 +10,7 @@ class Tool {
   initEvents() {
     var uiCanvas = this.board.uiCanvas
     this.isMouseDown = false
+    this.isClicked = false
     this.mouseDownHandler = (ev) => { this.onMouseDown(ev) } 
     this.mouseMoveHandler = (ev) => { this.onMouseMove(ev) } 
     this.mouseUpHandler = (ev) => { this.onMouseUp(ev) } 
@@ -34,6 +35,7 @@ class Tool {
   onMouseDown(ev) {
     this.mouseDownPos = this.getPos(ev) 
     this.isMouseDown = true
+    this.isClicked = false
   }
 
   onMouseMove(ev) {
@@ -43,6 +45,13 @@ class Tool {
   onMouseUp(ev) {
     this.mouseUpPos = this.getPos(ev)
     this.isMouseDown = false
+    var x1 = this.mouseDownPos.x
+    var y1 = this.mouseDownPos.y
+    var x2 = this.mouseUpPos.x
+    var y2 = this.mouseUpPos.y
+    if (Math.abs(x2 - x1) < 3 && Math.abs(y2 - y1) < 3) {
+      this.isClicked = true
+    }
   }
 
   drawLine(ctx, pos1, pos2) {
@@ -257,6 +266,7 @@ class Text extends Tool {
   constructor(board) {
     super(board)
     this.setupInput()
+    this.setupTextarea()
   }
 
   setupInput() {
@@ -305,12 +315,32 @@ class Text extends Tool {
   }
 
   drawTextarea(pos) {
-    var pos2 = {
-      x: pos.x + this.board.textWidth,
-      y: pos.y + this.board.textHeight
-    }
-    this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawRect(this.board.uiCtx, pos, pos2, {dashed: true, flow: true})
+    var w = this.board.textWidth
+    var h = this.board.textHeight
+    var ctx = this.board.assistCtx
+    ctx.save()
+    ctx.strokeStyle = "#000"
+    ctx.fillStyle = "#456"
+    ctx.lineWidth = 1
+    ctx.font = "15px sans-serif"
+    ctx.clearRect(0, 0, this.board.W, this.board.H)
+    ctx.strokeRect(pos.x, pos.y, w, h)
+    ctx.fillRect(pos.x, pos.y - this.confirmBtnH, this.confirmBtnW, this.confirmBtnH)
+    ctx.fillStyle = "#fff"
+    ctx.fillText("确认", pos.x + 10, pos.y - 10)
+    ctx.restore()
+  }
+
+  setupTextarea() {
+    this.isTextareaDrawn = false
+    this.textareaPos = {x:0, y:0}
+    this.confirmBtnW = 50
+    this.confirmBtnH = 30
+  }
+
+  confirmInput(pos) {
+    return (pos.x > this.textareaPos.x && pos.x < this.textareaPos.x + this.confirmBtnW
+      && pos.y > this.textareaPos.y - this.confirmBtnH && pos.y < this.textareaPos.y)
   }
 
 
@@ -319,17 +349,12 @@ class Text extends Tool {
     // this.board.cacel()
     this.drawOn().then(() => {
       this.input.value = ""
-      this.drawTextarea(this.mouseDownPos)
     })
   }
 
   onMouseDown(ev) {
     super.onMouseDown(ev)
-    if (this.input.value !== "") {
-      this.finishInput()
-    } else {
-      this.drawTextarea(this.mouseDownPos)
-    }
+    this.drawTextarea(this.mouseDownPos)
   }
 
   onMouseMove(ev) {
@@ -342,8 +367,18 @@ class Text extends Tool {
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
-    this.drawTextarea(this.mouseUpPos)
-    this.drawOn()
+    if (this.isTextareaDrawn) {
+      if (this.isClicked && this.confirmInput(this.mouseUpPos)) {
+        this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
+        this.finishInput()
+        this.isTextareaDrawn = false
+        return
+      }
+    }
+    this.textareaPos.x = this.mouseUpPos.x
+    this.textareaPos.y = this.mouseUpPos.y
+    this.drawTextarea(this.textareaPos)
+    this.isTextareaDrawn = true
     this.input.focus()
   }
 }

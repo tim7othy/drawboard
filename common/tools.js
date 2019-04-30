@@ -272,16 +272,26 @@ class Text extends Tool {
 
   setupInput() {
     // 生成一个隐藏的输入框挂载到页面上
-    var input = `<input id="drawboard_input" type="text" style="display:inline-block;height:0;">`
+    var input = `<textarea id="drawboard_input" style="display:inline-block;">`
     document.body.insertAdjacentHTML("beforeend", input)
     this.input = document.getElementById("drawboard_input")
     this.input.blur()
 
-    // 只有在画布上添加输入框后才会触发输入框的focus和input事件
-    this.input.addEventListener("input", (ev) => { this.onInput(ev) })
+    this.input.addEventListener("input", () => { 
+      // 没有在输入中文时，直接渲染到canvas文本框中
+      if (!this.onCompInput) {
+        this.onInput() 
+      }
+    })
+    this.input.addEventListener("compositionstart", () => { this.onCompInput = true})
+    this.input.addEventListener("compositionend", () => { 
+      this.onCompInput = false
+      // 输入一句中文完成时才渲染到文本框
+      this.onInput()
+    })
   }
   
-  onInput(ev) {
+  onInput() {
     this.value = this.input.value
     this.drawText(this.textareaPos, this.value)
   }
@@ -296,12 +306,18 @@ class Text extends Tool {
     var line = ""
     var headIndex = 0
     for (var i = 0; i < text.length; i++) {
-      line += text[i]
-      var obj = ctx.measureText(line)
-      if (obj.width > (this.board.textWidth - this.board.fontSize)) {
-        lines.push(text.substring(headIndex, i))
+      if (text[i] === "\n") {
+        lines.push(line)
+        headIndex = i + 1
         line = ""
-        headIndex = i
+      } else {
+        line += text[i]
+        var obj = ctx.measureText(line)
+        if (obj.width > (this.board.textWidth)) {
+          lines.push(text.substring(headIndex, i))
+          line = text[i]
+          headIndex = i
+        }
       }
     }
     if (line !== "") {
@@ -312,6 +328,11 @@ class Text extends Tool {
         ctx.fillText(lines[j], pos.x, pos.y + (j + 1) * this.board.fontSize)
       }
     }
+    const offsetX = this.board.fontSize * 0.1
+    const offsetY = this.board.fontSize * 0.2
+    var arrowX = offsetX + pos.x + lines[lines.length - 1].length * this.board.fontSize
+    var arrowY = offsetY + pos.y + (lines.length - 1) * this.board.fontSize
+    ctx.fillRect(arrowX, arrowY, 1, this.board.fontSize)
     ctx.restore()
   }
 
@@ -325,33 +346,41 @@ class Text extends Tool {
     var ctx = this.board.assistCtx
     ctx.save()
     ctx.strokeStyle = "#000"
-    ctx.fillStyle = "#456"
     ctx.lineWidth = 1
     ctx.font = "15px sans-serif"
     ctx.clearRect(0, 0, this.board.W, this.board.H)
     ctx.strokeRect(pos.x, pos.y, w, h)
-    ctx.fillRect(pos.x, pos.y - this.confirmBtnH, this.confirmBtnW, this.confirmBtnH)
+    // 绘制确认按钮
+    ctx.fillStyle = "RGB(18, 206, 102)"
+    ctx.fillRect(pos.x, pos.y - this.btnH, this.btnW, this.btnH)
     ctx.fillStyle = "#fff"
     ctx.fillText("确认", pos.x + 10, pos.y - 10)
+    // 绘制取消按钮
+    ctx.fillStyle = "#456"
+    ctx.fillRect(pos.x + this.btnW + 10, pos.y - this.btnH, this.btnW, this.btnH)
+    ctx.fillStyle = "#fff"
+    ctx.fillText("取消", pos.x + this.btnW + 20, pos.y - 10)
     ctx.restore()
   }
 
   setupTextarea() {
     this.isTextareaDrawn = false
     this.textareaPos = {x:0, y:0}
-    this.confirmBtnW = 50
-    this.confirmBtnH = 30
+    this.btnW = 50
+    this.btnH = 30
   }
 
   confirmInput(pos) {
-    return (pos.x > this.textareaPos.x && pos.x < this.textareaPos.x + this.confirmBtnW
-      && pos.y > this.textareaPos.y - this.confirmBtnH && pos.y < this.textareaPos.y)
+    return (pos.x > this.textareaPos.x && pos.x < this.textareaPos.x + this.btnW
+      && pos.y > this.textareaPos.y - this.btnH && pos.y < this.textareaPos.y)
   }
 
+  cancelInput(pos) {
+    return (pos.x > this.textareaPos.x + this.btnW + 10 && pos.x < this.textareaPos.x + 2*this.btnW + 10
+      && pos.y > this.textareaPos.y - this.btnH && pos.y < this.textareaPos.y)
+  }
 
   finishInput() {
-    // 去掉文本框的虚线框
-    // this.board.cacel()
     this.drawOn().then(() => {
       this.input.value = ""
     })
@@ -379,7 +408,15 @@ class Text extends Tool {
     if (this.isTextareaDrawn) {
       if (this.isClicked && this.confirmInput(this.mouseUpPos)) {
         this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
-        this.finishInput()
+        if (this.input.value !== "") {
+          this.finishInput()
+        }
+        this.isTextareaDrawn = false
+        return
+      } else if (this.isClicked && this.cancelInput(this.mouseUpPos)) {
+        this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
+        this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
+        this.input.value = ""
         this.isTextareaDrawn = false
         return
       } else {

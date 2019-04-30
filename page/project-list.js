@@ -10,24 +10,22 @@ class ProjectList {
 
   loadProjects() {
     var projects = localStorage.getItem("drawboard_projects")
-    if (!projects) {
-      this.infoElement.classList.add("active")
-      return
-    }
-    this.infoElement.classList.remove("active")
-    projects = JSON.parse(projects)
-    for (var k of Object.keys(projects)) {
-      var p = projects[k]
-      this.projects.set(k, p)
-      this.parentElement.insertAdjacentHTML("beforeend", `
-        <li data-projectid="${p.id}" class="project-item">
-          <img class="project-thumb" src="${p.dataURL}"> 
-          <div class="project-operations">
-            <span>下载</span>
-            <span>删除</span>
-          </div>
-        </li> 
-      `)
+    if (projects) {
+      projects = JSON.parse(projects)
+      if (Object.keys(projects).length === 0) {
+        this.infoElement.classList.add("active")
+      } else {
+        this.infoElement.classList.remove("active")
+        for (var k of Object.keys(projects)) {
+          var p = projects[k]
+          this.projects.set(k, p)
+          this.parentElement.insertAdjacentHTML("beforeend", `
+            <li data-projectid="${p.id}" class="project-item">
+              <img class="project-thumb" src="${p.dataURL}"> 
+            </li> 
+          `)
+        }
+      }
     }
   }
 
@@ -52,6 +50,19 @@ class ProjectList {
           <img class="project-thumb" src="${p.dataURL}"> 
         </li> 
       `)
+      var t = this.parentElement.querySelector(`li[data-projectid="${p.id}"]`)
+      t.classList.add("active")
+      var items = this.parentElement.querySelectorAll(".project-item")
+      for (var i of items) {
+        if (i !== t && i.classList.contains("active")) {
+          i.classList.remove("active")
+        }
+      }
+    })
+    window.eventbus.on("delete_project", (p) => {
+      this.projects.delete(p.id)
+      this.saveLocal()
+      this.parentElement.querySelector(`li[data-projectid="${p.id}"]`).remove()
     })
     this.parentElement.addEventListener("click", (ev) => {
       var t = ev.target

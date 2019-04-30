@@ -6,11 +6,13 @@ class DrawBoard {
     this.setupBackground()
     this.setupTools()
     this.setupHistory(30)
-    this.bindEvents()
+    this.setupProjects()
   }
 
-  bindEvents() {
+  setupProjects() {
+    this.currProject = null
     var saveBtn = document.querySelector(".publish-btn")
+    var deleteBtn = document.querySelector(".delete-btn")
     saveBtn.addEventListener("click", () => {
       var r = getRandom()
       var dataURL = this.mainCanvas.toDataURL()
@@ -18,10 +20,16 @@ class DrawBoard {
         id: r,
         dataURL: dataURL
       }
+      this.currProject = project
       window.eventbus.emit("save_project", project)
     })
 
+    deleteBtn.addEventListener("click", () => {
+      window.eventbus.emit("delete_project", this.currProject)
+    })
+
     window.eventbus.on("load_project", (p) => {
+      this.currProject = p
       var img = new Image()
       img.onload = () => {
         this.mainCtx.clearRect(0, 0, this.W, this.H)
@@ -31,6 +39,7 @@ class DrawBoard {
       }
       img.src = p.dataURL
     })
+
   }
 
   setupCanvas() {

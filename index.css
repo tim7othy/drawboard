@@ -32,11 +32,11 @@ header .logo {
 
 header .publish-btn {
   float: right;
-  width: 10%;
+  width: 5%;
   height: 40px;
   border-radius: 20px;
   margin-top: 20px;
-  margin-right: 10%;
+  margin-right: 2%;
   text-align: center;
   line-height: 35px;
   color: #fff;
@@ -47,6 +47,24 @@ header .publish-btn {
 header .publish-btn:hover {
   background: #425893;
 }
+
+header .delete-btn {
+  float: right;
+  width: 5%;
+  height: 40px;
+  border-radius: 20px;
+  margin-top: 20px;
+  margin-right: 8%;
+  text-align: center;
+  line-height: 35px;
+  color: #fff;
+  background: RGB(255, 120, 73);
+  cursor: pointer;
+}
+header .delete-btn:hover {
+  background: RGB(230, 67, 63);
+}
+
 .content {
   position: absolute;
   width: 100%;

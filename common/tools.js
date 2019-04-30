@@ -267,6 +267,7 @@ class Text extends Tool {
     super(board)
     this.setupInput()
     this.setupTextarea()
+    this.toolType = TEXT
   }
 
   setupInput() {
@@ -282,7 +283,7 @@ class Text extends Tool {
   
   onInput(ev) {
     this.value = this.input.value
-    this.drawText(this.mouseUpPos, this.value)
+    this.drawText(this.textareaPos, this.value)
   }
 
   drawText(pos, text) {
@@ -312,6 +313,10 @@ class Text extends Tool {
       }
     }
     ctx.restore()
+  }
+
+  resize() {
+    this.drawTextarea(this.textareaPos)
   }
 
   drawTextarea(pos) {
@@ -354,7 +359,9 @@ class Text extends Tool {
 
   onMouseDown(ev) {
     super.onMouseDown(ev)
-    this.drawTextarea(this.mouseDownPos)
+    if (!this.isTextareaDrawn) {
+      this.drawTextarea(this.mouseDownPos)
+    }
   }
 
   onMouseMove(ev) {
@@ -362,7 +369,9 @@ class Text extends Tool {
     if (!this.isMouseDown) {
       return
     }
-    this.drawTextarea(this.mouseMovePos)
+    if (!this.isTextareaDrawn) {
+      this.drawTextarea(this.mouseMovePos)
+    }
   }
 
   onMouseUp(ev) {
@@ -373,12 +382,15 @@ class Text extends Tool {
         this.finishInput()
         this.isTextareaDrawn = false
         return
+      } else {
+        this.input.focus()
       }
+    } else {
+      this.textareaPos.x = this.mouseUpPos.x
+      this.textareaPos.y = this.mouseUpPos.y
+      this.drawTextarea(this.textareaPos)
+      this.isTextareaDrawn = true
+      this.input.focus()
     }
-    this.textareaPos.x = this.mouseUpPos.x
-    this.textareaPos.y = this.mouseUpPos.y
-    this.drawTextarea(this.textareaPos)
-    this.isTextareaDrawn = true
-    this.input.focus()
   }
 }

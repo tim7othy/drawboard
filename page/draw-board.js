@@ -80,8 +80,18 @@ class DrawBoard {
     var eb = window.eventbus
     eb.on("board_line_width_change", (value) => {this.lineWidth = parseInt(value)})
     eb.on("board_color_change", (value) => {this.color = value})
-    eb.on("board_text_width_change", (value) => {this.textWidth = parseInt(value)})
-    eb.on("board_text_height_change", (value) => {this.textHeight = parseInt(value)})
+    eb.on("board_text_width_change", (value) => {
+      this.textWidth = parseInt(value)
+      if (this.tool.toolType === TEXT) {
+        this.tool.resize()
+      }
+    })
+    eb.on("board_text_height_change", (value) => {
+      this.textHeight = parseInt(value)
+      if (this.tool.toolType === TEXT) {
+        this.tool.resize()
+      }
+    })
     eb.on("board_font_size_change", (value) => {this.fontSize = parseInt(value)})
     eb.on("board_eraser_size_change", (value) => {this.eraserSize = parseInt(value)})
   }
@@ -186,7 +196,7 @@ class DrawBoard {
 
   switchTool(toolType) {
     var tool = this.tools.get(toolType)
-    if (tool && toolType != this.tool.toolType) {
+    if (tool && toolType !== this.tool.toolType) {
       // 取消当前工具在dom上绑定的事件
       this.tool.unInstall()
       // 切换工具

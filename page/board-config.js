@@ -20,7 +20,6 @@ class BoardConfig {
         }
         t = t.parentElement
       }
-      log(t.value)
       window.eventbus.emit(t.id + "_change", t.value)
     })
   }

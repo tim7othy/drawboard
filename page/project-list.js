@@ -1,6 +1,8 @@
 class ProjectList {
   constructor(parentId) {
     this.parentId = parentId
+    this.$listPane = new jq("#" + parentId)
+    this.$infoPane = new jq(".project-list-info")
     this.parentElement = document.getElementById(parentId)
     this.infoElement = this.parentElement.querySelector(".project-list-info")
     this.projects = new Map()
@@ -64,6 +66,11 @@ class ProjectList {
       this.saveLocal()
       this.parentElement.querySelector(`li[data-projectid="${p.id}"]`).remove()
     })
+
+    // this.$listPane.delegate("click", ".project-item", (ev, el) => {
+    //   var $el = new jq(el)
+    //   $el.addClass("active")
+    // })
     this.parentElement.addEventListener("click", (ev) => {
       var t = ev.target
       while (!t.classList.contains("project-item")) {

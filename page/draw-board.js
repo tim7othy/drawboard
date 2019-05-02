@@ -13,6 +13,7 @@ class DrawBoard {
     this.currProject = null
     var saveBtn = document.querySelector(".publish-btn")
     var deleteBtn = document.querySelector(".delete-btn")
+
     saveBtn.addEventListener("click", () => {
       var r = getRandom()
       var dataURL = this.mainCanvas.toDataURL()

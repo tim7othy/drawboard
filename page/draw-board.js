@@ -155,21 +155,6 @@ class DrawBoard {
     bgCtx.strokeStyle = "#369"
     bgCtx.fillStyle = "#fff"
     bgCtx.fillRect(0, 0, this.W, this.H)
-    // bgCtx.lineWidth = 1
-    // bgCtx.fillRect(0, 0, this.W, this.H)
-    // var w = this.gridWidth || 20
-    // var h = this.gridHeight || 20
-    // var cols = Math.floor(this.W / w)
-    // var rows = Math.floor(this.H / h)
-    // for (var i = 0; i <= cols; i++) {
-    //   bgCtx.moveTo(w*i, 0)
-    //   bgCtx.lineTo(w*i, this.H)
-    // }
-    // for (var i = 0; i <= rows; i++) {
-    //   bgCtx.moveTo(0, h*i)
-    //   bgCtx.lineTo(this.W, h*i)
-    // }
-    // bgCtx.stroke()
     bgCtx.restore()
   }
 }

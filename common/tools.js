@@ -93,23 +93,6 @@ class Tool {
     this.execCommand(cmd)
   }
 
-  // drawOn() {
-  //   return new Promise((resolve, reject) => {
-  //     // ui绘制层canvas生成图片
-  //     var dataURL = this.board.uiCanvas.toDataURL()
-  //     var img = new Image()
-  //     img.onload = () => {
-  //       // 将ui层生成的图片绘制到主画板上
-  //       this.board.mainCtx.drawImage(img, 0, 0) 
-  //       // 清空ui canvas层的动态绘制内容
-  //       this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-  //       this.saveHistory()
-  //       resolve()
-  //     }
-  //     img.src = dataURL
-  //   })
-  // }
-
   clearUI() {
     this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
   }

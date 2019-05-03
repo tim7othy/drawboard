@@ -1,6 +1,7 @@
 class Tool {
   constructor(board) {
     this.board = board
+    this.positions = []
   }
 
   install() {
@@ -32,6 +33,37 @@ class Tool {
     return {x, y}
   }
 
+  addPos(pos) {
+    this.positions.push(pos)
+  }
+
+  clearPos() {
+    this.positions = []
+  }
+
+  makeCommand() {}
+
+  getCommandContext() {
+    return {
+      ctx: this.board.mainCtx,
+      color: this.board.color,
+      lineWidth: this.board.lineWidth,
+      positions: this.getPositions()
+    }
+  }
+
+  setCommand(cmd) {
+    this.board.setHistory(cmd)
+  }
+
+  execCommand(cmd) {
+    cmd.execute()
+  }
+
+  getPositions() {
+    return JSON.parse(JSON.stringify(this.positions))
+  }
+
   onMouseDown(ev) {
     this.mouseDownPos = this.getPos(ev) 
     this.isMouseDown = true
@@ -54,63 +86,36 @@ class Tool {
     }
   }
 
-  drawLine(ctx, pos1, pos2) {
-    ctx.save()
-    ctx.lineWidth = this.board.lineWidth
-    ctx.strokeStyle = this.board.color
-    ctx.beginPath()
-    ctx.moveTo(pos1.x, pos1.y)
-    ctx.lineTo(pos2.x, pos2.y)
-    ctx.stroke()
-    ctx.restore()
-  }
-
-  drawRect(ctx, pos1, pos2) {
-    var w = pos2.x - pos1.x
-    var h = pos2.y - pos1.y
-    ctx.save()
-    ctx.lineWidth = this.board.lineWidth
-    ctx.strokeStyle = this.board.color
-    ctx.beginPath()
-    ctx.moveTo(pos1.x, pos1.y)
-    ctx.lineTo(pos1.x + w, pos1.y)
-    ctx.lineTo(pos1.x + w, pos1.y + h)
-    ctx.lineTo(pos1.x, pos1.y + h)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.restore()
-  }
-
-  drawCircle(ctx, center, radius) {
-    ctx.save()
-    ctx.lineWidth = this.board.lineWidth
-    ctx.strokeStyle = this.board.color
-    ctx.beginPath()
-    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2)
-    ctx.stroke()
-    ctx.restore()
-  }
 
   drawOn() {
-    return new Promise((resolve, reject) => {
-      // ui绘制层canvas生成图片
-      var dataURL = this.board.uiCanvas.toDataURL()
-      var img = new Image()
-      img.onload = () => {
-        // 将ui层生成的图片绘制到主画板上
-        this.board.mainCtx.drawImage(img, 0, 0) 
-        // 清空ui canvas层的动态绘制内容
-        this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-        this.saveHistory()
-        resolve()
-      }
-      img.src = dataURL
-    })
+    var cmd = this.makeCommand()
+    this.setCommand(cmd)
+    this.execCommand(cmd)
   }
 
-  saveHistory() {
-    var t = this.board.mainCanvas.toDataURL()
-    this.board.setHistory(t)
+  // drawOn() {
+  //   return new Promise((resolve, reject) => {
+  //     // ui绘制层canvas生成图片
+  //     var dataURL = this.board.uiCanvas.toDataURL()
+  //     var img = new Image()
+  //     img.onload = () => {
+  //       // 将ui层生成的图片绘制到主画板上
+  //       this.board.mainCtx.drawImage(img, 0, 0) 
+  //       // 清空ui canvas层的动态绘制内容
+  //       this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
+  //       this.saveHistory()
+  //       resolve()
+  //     }
+  //     img.src = dataURL
+  //   })
+  // }
+
+  clearUI() {
+    this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
+  }
+
+  clearMain() {
+    this.board.mainCtx.clearRect(0, 0, this.board.W, this.board.H)
   }
 }
 
@@ -118,6 +123,16 @@ class PenTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = PEN
+  }
+
+  makeCommand() {
+    var context = this.getCommandContext()
+    return new PenDrawCommand(context)
+  }
+
+  onMouseDown(ev) {
+    super.onMouseDown(ev)
+    this.addPos(this.mouseDownPos)
   }
 
   onMouseMove(ev) {
@@ -130,16 +145,20 @@ class PenTool extends Tool {
         ...this.mouseDownPos
       }
     }
-    this.drawLine(this.board.uiCtx, this.lastPos, this.mouseMovePos)
+    Graphic.drawLine(this.board.uiCtx, this.lastPos, this.mouseMovePos)
     this.lastPos = {
       ...this.mouseMovePos
     }
+    this.addPos(this.mouseMovePos)
   }
+
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
-    this.lastPos = null
     this.drawOn()
+    this.clearUI()
+    this.lastPos = null
+    this.clearPos()
   }
 }
 
@@ -149,18 +168,31 @@ class RectTool extends Tool {
     this.toolType = RECT
   }
 
+  makeCommand() {
+    return new RectDrawCommand(this.getCommandContext())
+  }
+
+  onMouseDown(ev) {
+    super.onMouseDown(ev)
+    this.addPos(this.mouseDownPos)
+  }
+
   onMouseMove(ev) {
     super.onMouseMove(ev)
     if (!this.isMouseDown) {
       return
     }
-    this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawRect(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
+    this.clearUI()
+    Graphic.drawRect(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
   }
+
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
+    this.addPos(this.mouseUpPos)
     this.drawOn()
+    this.clearUI()
+    this.clearPos()
   }
 
 }
@@ -171,16 +203,26 @@ class EraserTool extends Tool {
     this.toolType = ERASER
   }
 
+  getCommandContext() {
+    return {
+      ctx: this.board.mainCtx,
+      width: this.board.eraserSize,
+      height: this.board.eraserSize,
+      positions: this.getPositions()
+    }
+  }
+
   drawEraserBorder(x, y, w, h) {
     var ctx = this.board.uiCtx
     var pos1 = {x, y}
     var pos2 = {x:x+w, y:y+h}
-    ctx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawRect(ctx, pos1, pos2)
+    this.clearUI()
+    Graphic.drawRect(ctx, pos1, pos2)
   }
 
   onMouseDown(ev) {
     super.onMouseDown(ev)
+    this.addPos(this.mouseDownPos)
     var eraserWidth = this.board.eraserSize
     var eraserHeight = this.board.eraserSize
     var x = this.mouseDownPos.x - eraserWidth / 2
@@ -190,6 +232,7 @@ class EraserTool extends Tool {
 
   onMouseMove(ev) {
     super.onMouseMove(ev)
+    this.addPos(this.mouseMovePos)
     var eraserWidth = this.board.eraserSize
     var eraserHeight = this.board.eraserSize
     var x = this.mouseMovePos.x - eraserWidth / 2
@@ -203,7 +246,10 @@ class EraserTool extends Tool {
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
-    this.saveHistory()
+    this.addPos(this.mouseUpPos)
+    var cmd = this.makeCommand()
+    this.setCommand(cmd)
+    this.clearPos()
   }
 }
 
@@ -213,18 +259,30 @@ class LineTool extends Tool {
     this.toolType = LINE
   }
 
+  makeCommand() {
+    return new LineDrawCommand(this.getCommandContext())
+  }
+
+  onMouseDown(ev) {
+    super.onMouseDown(ev)
+    this.addPos(this.mouseDownPos)
+  }
+
   onMouseMove(ev) {
     super.onMouseMove(ev)
     if (!this.isMouseDown) {
       return
     }
-    this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawLine(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
+    this.clearUI()
+    Graphic.drawLine(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
   }
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
+    this.addPos(this.mouseUpPos)
     this.drawOn()
+    this.clearUI()
+    this.clearPos()
   }
 }
 
@@ -234,6 +292,15 @@ class CircleTool extends Tool {
     this.toolType = CIRCLE
   }
 
+  makeCommand() {
+    return new CircleDrawCommand(this.getCommandContext())
+  }
+
+  onMouseDown(ev) {
+    super.onMouseDown(ev)
+    this.addPos(this.mouseDownPos)
+  }
+
   onMouseMove(ev) {
     super.onMouseMove(ev)
     if (!this.isMouseDown) {
@@ -241,14 +308,16 @@ class CircleTool extends Tool {
     }
     var pos1 = this.mouseDownPos
     var pos2 = this.mouseMovePos
-    var radius = Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2))
-    this.board.uiCtx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawCircle(this.board.uiCtx, this.mouseDownPos, radius)
+    this.clearUI()
+    Graphic.drawCircle(this.board.uiCtx, pos1, pos2)
   }
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
+    this.addPos(this.mouseUpPos)
     this.drawOn()
+    this.clearUI()
+    this.clearPos()
   }
 }
 
@@ -281,14 +350,29 @@ class TextTool extends Tool {
     })
   }
   
-  onInput() {
-    this.value = this.input.value
-    this.drawText(this.textareaPos, this.value)
+  makeCommand() {
+    return new TextDrawCommand(this.getCommandContext())
   }
 
-  drawText(pos, text) {
-    var ctx = this.board.uiCtx
-    ctx.clearRect(0, 0, this.board.W, this.board.H)
+  getCommandContext() {
+    return {
+      ctx: this.board.mainCtx,
+      pos: this.textareaPos,
+      text: this.value,
+      color: this.board.color,
+      fontSize: this.board.fontSize,
+      textWidth: this.board.textWidth,
+      textHeight: this.board.textHeight
+    }
+  }
+
+  onInput() {
+    this.value = this.input.value
+    this.clearUI()
+    this.drawText(this.board.uiCtx, this.textareaPos, this.value)
+  }
+
+  drawText(ctx, pos, text) {
     ctx.save()
     ctx.font = `${this.board.fontSize}px sans-serif`;
     ctx.fillStyle = this.board.color
@@ -318,15 +402,15 @@ class TextTool extends Tool {
         ctx.fillText(lines[j], pos.x, pos.y + (j + 1) * this.board.fontSize)
       }
     }
-    const offsetX = this.board.fontSize * 0.1
-    const offsetY = this.board.fontSize * 0.2
-    var arrowX = offsetX + pos.x + lines[lines.length - 1].length * this.board.fontSize
-    var arrowY = offsetY + pos.y + (lines.length - 1) * this.board.fontSize
-    // 光标需要重新绘制，同一层的文本框也需要
-    this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
-    this.drawTextarea(this.textareaPos)
-    this.board.assistCtx.fillRect(arrowX, arrowY, 1, this.board.fontSize)
-    ctx.restore()
+    // const offsetX = this.board.fontSize * 0.1
+    // const offsetY = this.board.fontSize * 0.2
+    // var arrowX = offsetX + pos.x + lines[lines.length - 1].length * this.board.fontSize
+    // var arrowY = offsetY + pos.y + (lines.length - 1) * this.board.fontSize
+    // // 光标需要重新绘制，同一层的文本框也需要
+    // this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)
+    // this.drawTextarea(this.textareaPos)
+    // this.board.assistCtx.fillRect(arrowX, arrowY, 1, this.board.fontSize)
+    // ctx.restore()
   }
 
   resize() {
@@ -374,9 +458,10 @@ class TextTool extends Tool {
   }
 
   finishInput() {
-    this.drawOn().then(() => {
-      this.input.value = ""
-    })
+    this.drawOn()
+    this.clearUI()
+    this.setCommand()
+    this.input.value = ""
   }
 
   onMouseDown(ev) {

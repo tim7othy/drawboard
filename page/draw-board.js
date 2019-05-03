@@ -107,7 +107,6 @@ class DrawBoard {
 
   setupHistory(capacity) {
     this.history = {
-      head: 0,
       tail: 0,
       curr: 0,
       capacity: capacity,
@@ -117,13 +116,9 @@ class DrawBoard {
 
   setHistory(item) {
     var h = this.history
-    var next = (h.curr + 1) % (h.capacity - 1)
-    if (next !== h.head) {
+    var next = h.curr + 1
+    if (next < h.capacity) {
       h.queue[next] = item
-    } else {
-      this.baseDataURL = h.queue[next]
-      h.queue[next] = item
-      h.head = (h.head + 1) % (h.capacity - 1)
     }
     h.curr = next
     h.tail = next
@@ -131,34 +126,27 @@ class DrawBoard {
 
   cancel() {
     var h = this.history
-    if (h.curr === h.head) return
-    var next = h.curr - 1 >= 0 ? h.curr - 1 : h.capacity - 1
-    if (next !== h.head) {
-      var lastDataURL = h.queue[next]
-      var img = new Image()
-      img.onload = () => {
-        this.mainCtx.clearRect(0, 0, this.W, this.H)
-        this.mainCtx.drawImage(img, 0, 0)
+    if (h.curr === 0) return
+    var next = h.curr - 1
+    if (next > 0) {
+      this.mainCtx.clearRect(0, 0, this.W, this.H)
+      for (var i = 1; i < h.curr; i++) {
+        h.queue[i].execute()
       }
-      img.src = lastDataURL
+      h.curr = next
     } else {
       this.mainCtx.clearRect(0, 0, this.W, this.H)
     }
-    h.curr = next
   }
 
   redo() {
     var h = this.history
     if (h.curr === h.tail) return
-    var next = (h.curr + 1) % (h.capacity - 1)
-    h.curr = next
-    var nextDataURL = h.queue[next]
-    var img = new Image()
-    img.onload = () => {
-      this.mainCtx.clearRect(0, 0, this.W, this.H)
-      this.mainCtx.drawImage(img, 0, 0)
+    h.curr += 1
+    this.mainCtx.clearRect(0, 0, this.W, this.H)
+    for (var i = 1; i < h.curr + 1; i++) {
+      h.queue[i].execute()
     }
-    img.src = nextDataURL
   }
 
   setupBackground() {

@@ -65,22 +65,12 @@ class Tool {
     ctx.restore()
   }
 
-  drawRect(ctx, pos1, pos2, options) {
+  drawRect(ctx, pos1, pos2) {
     var w = pos2.x - pos1.x
     var h = pos2.y - pos1.y
     ctx.save()
     ctx.lineWidth = this.board.lineWidth
     ctx.strokeStyle = this.board.color
-    if (options && options.dashed) {
-      ctx.setLineDash([5, 15])
-      if (options.flow) {
-        ctx.lineDashOffset = this.dashOffset
-        this.dashOffset++
-        if (this.dashOffset > 16) {
-          this.dashOffset = 0
-        }
-      }
-    }
     ctx.beginPath()
     ctx.moveTo(pos1.x, pos1.y)
     ctx.lineTo(pos1.x + w, pos1.y)
@@ -124,7 +114,7 @@ class Tool {
   }
 }
 
-class Pen extends Tool {
+class PenTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = PEN
@@ -153,7 +143,7 @@ class Pen extends Tool {
   }
 }
 
-class Rect extends Tool {
+class RectTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = RECT
@@ -175,7 +165,7 @@ class Rect extends Tool {
 
 }
 
-class Eraser extends Tool {
+class EraserTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = ERASER
@@ -217,7 +207,7 @@ class Eraser extends Tool {
   }
 }
 
-class Line extends Tool {
+class LineTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = LINE
@@ -238,7 +228,7 @@ class Line extends Tool {
   }
 }
 
-class Circle extends Tool {
+class CircleTool extends Tool {
   constructor(board) {
     super(board)
     this.toolType = CIRCLE
@@ -262,7 +252,7 @@ class Circle extends Tool {
   }
 }
 
-class Text extends Tool {
+class TextTool extends Tool {
   constructor(board) {
     super(board)
     this.setupInput()

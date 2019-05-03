@@ -1,5 +1,5 @@
-- [ ] 修改history存储方式为deque
+- [x] 修改history存储方式为deque
 - [ ] history存储内容改为command
-- [ ] 添加删除项目和播放项目按钮和事件
+- [x] 添加删除项目和播放项目按钮和事件
 - [ ] 修复橡皮擦bug
-- [ ] 修复文本框bug
+- [x] 修复文本框bug

@@ -70,5 +70,3 @@ class ProjectList {
     })
   }
 }
-
-new ProjectList("board_project_list")

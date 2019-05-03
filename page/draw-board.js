@@ -4,7 +4,6 @@ class DrawBoard {
     this.setupCanvas()
     this.setupConfig()
     this.setupBackground()
-    this.setupTools()
     this.setupHistory(30)
     this.setupProjects()
   }
@@ -36,7 +35,7 @@ class DrawBoard {
         this.mainCtx.clearRect(0, 0, this.W, this.H)
         this.uiCtx.clearRect(0, 0, this.W, this.H)
         this.mainCtx.drawImage(img, 0, 0)
-        this.setupHistory()
+        this.setupHistory(30)
       }
       img.src = p.dataURL
     })
@@ -185,47 +184,4 @@ class DrawBoard {
     // bgCtx.stroke()
     bgCtx.restore()
   }
-
-  setupTools() {
-    this.tools = new Map([
-      [PEN, new Pen(this)],
-      [ERASER, new Eraser(this)],
-      [RECT, new Rect(this)],
-      [LINE, new Line(this)],
-      [CIRCLE, new Circle(this)],
-      [TEXT, new Text(this)]
-    ])
-    // 默认工具为画笔
-    this.tool = this.tools.get(PEN)
-    // 在Dom节点上绑定当前工具相关事件
-    this.tool.install()
-
-    window.eventbus.on("switch-tool", (toolType) => { this.switchTool(toolType) })
-    
-  }
-
-  switchTool(toolType) {
-    var tool = this.tools.get(toolType)
-    if (tool && toolType !== this.tool.toolType) {
-      // 取消当前工具在dom上绑定的事件
-      this.tool.unInstall()
-      // 切换工具
-      this.tool = tool
-      this.tool.install()
-    } else if (toolType === CLEAR){
-      this.mainCtx.clearRect(0, 0, this.W, this.H)
-    } else if (toolType === DOWNLOAD) {
-      var image = this.mainCanvas.toDataURL("image/png")
-      var save_link = document.createElement('a');
-      save_link.href = image;
-      save_link.download = new Date().toUTCString() + '.png';
-      save_link.click()
-    } else if (toolType === CANCEL) {
-      this.cancel()
-    } else if (toolType === REDO) {
-      this.redo()
-    }
-  }
 }
-
-new DrawBoard("drawboard_wrapper")

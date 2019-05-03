@@ -10,5 +10,3 @@ class BoardConfig {
     })
   }
 }
-
-new BoardConfig()

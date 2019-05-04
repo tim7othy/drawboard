@@ -70,7 +70,7 @@ class EraserDrawCommand extends Command {
     var {ctx, width, height, positions} = this.receiver
     for (var i = 0; i < positions.length; i++) {
       var p = positions[i]
-      ctx.clearRect(p.x, p.y, width, height)
+      ctx.clearRect(p.x - width / 2, p.y - height / 2, width, height)
     }
   }
 }

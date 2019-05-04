@@ -219,6 +219,10 @@ class EraserTool extends Tool {
     this.toolType = ERASER
   }
 
+  makeCommand() {
+    return new EraserDrawCommand(this.getCommandContext())
+  }
+
   getCommandContext() {
     return {
       ctx: this.board.mainCtx,
@@ -248,21 +252,23 @@ class EraserTool extends Tool {
 
   onMouseMove(ev) {
     super.onMouseMove(ev)
-    this.addPos(this.mouseMovePos)
     var eraserWidth = this.board.eraserSize
     var eraserHeight = this.board.eraserSize
     var x = this.mouseMovePos.x - eraserWidth / 2
     var y = this.mouseMovePos.y - eraserHeight / 2
-    this.drawEraserBorder(x, y, eraserWidth, eraserHeight)
-    if (!this.isMouseDown) {
-      return
+    if (this.isMouseDown) {
+      this.addPos(this.mouseMovePos)
+      this.board.mainCtx.clearRect(x, y, eraserWidth, eraserHeight)
     }
-    this.board.mainCtx.clearRect(x, y, eraserWidth, eraserHeight)
+    this.drawEraserBorder(x, y, eraserWidth, eraserHeight)
   }
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
-    this.addPos(this.mouseUpPos)
+    if (this.outOfRange) {
+      this.clearPos()
+      return
+    }
     var cmd = this.makeCommand()
     this.setCommand(cmd)
     this.clearPos()

@@ -9,27 +9,28 @@ class Tool {
   }
 
   initEvents() {
-    var uiCanvas = this.board.uiCanvas
     this.isMouseDown = false
     this.isClicked = false
     this.mouseDownHandler = (ev) => { this.onMouseDown(ev) } 
     this.mouseMoveHandler = (ev) => { this.onMouseMove(ev) } 
     this.mouseUpHandler = (ev) => { this.onMouseUp(ev) } 
-    uiCanvas.addEventListener("mousedown", this.mouseDownHandler)
-    uiCanvas.addEventListener("mousemove", this.mouseMoveHandler)
-    uiCanvas.addEventListener("mouseup", this.mouseUpHandler)
+    window.addEventListener("mousedown", this.mouseDownHandler)
+    window.addEventListener("mousemove", this.mouseMoveHandler)
+    window.addEventListener("mouseup", this.mouseUpHandler)
   }
 
   unInstall() {
-    var uiCanvas = this.board.uiCanvas
-    uiCanvas.removeEventListener("mousedown", this.mouseDownHandler)
-    uiCanvas.removeEventListener("mousemove", this.mouseMoveHandler)
-    uiCanvas.removeEventListener("mouseup", this.mouseUpHandler)
+    window.removeEventListener("mousedown", this.mouseDownHandler)
+    window.removeEventListener("mousemove", this.mouseMoveHandler)
+    window.removeEventListener("mouseup", this.mouseUpHandler)
   }
 
   getPos(ev) {
-    var x = ev.offsetX
-    var y = ev.offsetY
+    // 鼠标事件在文档上的坐标
+    var pageX = ev.pageX
+    var pageY = ev.pageY
+    var x = pageX - this.board.offsetX
+    var y = pageY - this.board.offsetY
     return {x, y}
   }
 
@@ -68,21 +69,31 @@ class Tool {
     this.mouseDownPos = this.getPos(ev) 
     this.isMouseDown = true
     this.isClicked = false
+    this.outOfRange = false
   }
 
   onMouseMove(ev) {
     this.mouseMovePos = this.getPos(ev)
   }
 
+  _pointInCanvasRange(pos) {
+    var w = this.board.W
+    var h = this.board.H
+    return pos.x > 0 && pos.x < w && pos.y > 0 && pos.y < h
+  }
+
   onMouseUp(ev) {
     this.mouseUpPos = this.getPos(ev)
     this.isMouseDown = false
-    var x1 = this.mouseDownPos.x
-    var y1 = this.mouseDownPos.y
-    var x2 = this.mouseUpPos.x
-    var y2 = this.mouseUpPos.y
-    if (Math.abs(x2 - x1) < 3 && Math.abs(y2 - y1) < 3) {
+    var pos1 = this.mouseDownPos
+    var pos2 = this.mouseUpPos
+    if (Math.abs(pos2.x - pos1.x) < 3 && Math.abs(pos2.y - pos1.y) < 3) {
       this.isClicked = true
+    }
+    if (this._pointInCanvasRange(pos1) && this._pointInCanvasRange(pos2)) {
+      this.outOfRange = false
+    } else {
+      this.outOfRange = true
     }
   }
 
@@ -128,17 +139,28 @@ class PenTool extends Tool {
         ...this.mouseDownPos
       }
     }
-    Graphic.drawLine(this.board.uiCtx, this.lastPos, this.mouseMovePos)
+    this.drawTmpLines()
     this.lastPos = {
       ...this.mouseMovePos
     }
     this.addPos(this.mouseMovePos)
   }
 
+  drawTmpLines() {
+    var ctx = this.board.uiCtx
+    ctx.save()
+    ctx.strokeStyle = this.board.color
+    ctx.lineWidth = this.board.lineWidth
+    Graphic.drawLine(ctx, this.lastPos, this.mouseMovePos)
+    ctx.restore()
+  }
+
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
-    this.drawOn()
+    if (!this.outOfRange) {
+      this.drawOn()
+    }
     this.clearUI()
     this.lastPos = null
     this.clearPos()
@@ -166,16 +188,27 @@ class RectTool extends Tool {
       return
     }
     this.clearUI()
-    Graphic.drawRect(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
+    this.drawTmpRect()
   }
 
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
     this.addPos(this.mouseUpPos)
-    this.drawOn()
+    if (!this.outOfRange) {
+      this.drawOn()
+    }
     this.clearUI()
     this.clearPos()
+  }
+
+  drawTmpRect() {
+    var ctx = this.board.uiCtx
+    ctx.save()
+    ctx.strokeStyle = this.board.color
+    ctx.lineWidth = this.board.lineWidth
+    Graphic.drawRect(ctx, this.mouseDownPos, this.mouseMovePos)
+    ctx.restore()
   }
 
 }
@@ -257,15 +290,26 @@ class LineTool extends Tool {
       return
     }
     this.clearUI()
-    Graphic.drawLine(this.board.uiCtx, this.mouseDownPos, this.mouseMovePos)
+    this.drawTmpLine()
   }
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
     this.addPos(this.mouseUpPos)
-    this.drawOn()
+    if (!this.outOfRange) {
+      this.drawOn()
+    }
     this.clearUI()
     this.clearPos()
+  }
+
+  drawTmpLine() {
+    var ctx = this.board.uiCtx
+    ctx.save()
+    ctx.strokeStyle = this.board.color
+    ctx.lineWidth = this.board.lineWidth
+    Graphic.drawLine(ctx, this.mouseDownPos, this.mouseMovePos)
+    ctx.restore()
   }
 }
 
@@ -289,33 +333,48 @@ class CircleTool extends Tool {
     if (!this.isMouseDown) {
       return
     }
-    var pos1 = this.mouseDownPos
-    var pos2 = this.mouseMovePos
     this.clearUI()
-    Graphic.drawCircle(this.board.uiCtx, pos1, pos2)
+    this.drawTmpCircle()
   }
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
     this.addPos(this.mouseUpPos)
-    this.drawOn()
+    if (!this.outOfRange) {
+      this.drawOn()
+    }
     this.clearUI()
     this.clearPos()
+  }
+
+  drawTmpCircle() {
+    var ctx = this.board.uiCtx
+    ctx.save()
+    ctx.strokeStyle = this.board.color
+    ctx.lineWidth = this.board.lineWidth
+    Graphic.drawCircle(ctx, this.mouseDownPos, this.mouseMovePos)
+    ctx.restore()
   }
 }
 
 class TextTool extends Tool {
   constructor(board) {
     super(board)
+    this.setupConfigChange()
     this.setupInput()
     this.setupTextarea()
     this.toolType = TEXT
   }
 
+  setupConfigChange() {
+    window.eventbus.on("board_text_width_change", (value) => { this.resize() })
+    window.eventbus.on("board_text_height_change", (value) => { this.resize() })
+  }
+
   setupInput() {
     // 生成一个隐藏的输入框挂载到页面上
-    var input = `<textarea id="drawboard_input" style="display:inline-block;">`
-    document.body.insertAdjacentHTML("beforeend", input)
+    var input = `<textarea id="drawboard_input">`
+    this.board.uiCanvas.insertAdjacentHTML("afterend", input)
     this.input = document.getElementById("drawboard_input")
     this.input.blur()
 
@@ -466,6 +525,7 @@ class TextTool extends Tool {
 
   onMouseUp(ev) {
     super.onMouseUp(ev)
+    if (this.outOfRange) return
     if (this.isTextareaDrawn) {
       if (this.isClicked && this.confirmInput(this.mouseUpPos)) {
         this.board.assistCtx.clearRect(0, 0, this.board.W, this.board.H)

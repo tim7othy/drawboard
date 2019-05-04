@@ -2,10 +2,17 @@ class DrawBoard {
   constructor(parentId) {
     this.parentId = parentId
     this.setupCanvas()
+    this.setupOffset()
     this.setupConfig()
     this.setupBackground()
     this.setupHistory(30)
     this.setupProjects()
+  }
+
+  setupOffset() {
+    var bounding = this.uiCanvas.getBoundingClientRect()
+    this.offsetX = parseInt(bounding.left)
+    this.offsetY = parseInt(bounding.top)
   }
 
   setupProjects() {
@@ -89,18 +96,8 @@ class DrawBoard {
     var eb = window.eventbus
     eb.on("board_line_width_change", (value) => {this.lineWidth = parseInt(value)})
     eb.on("board_color_change", (value) => {this.color = value})
-    eb.on("board_text_width_change", (value) => {
-      this.textWidth = parseInt(value)
-      if (this.tool.toolType === TEXT) {
-        this.tool.resize()
-      }
-    })
-    eb.on("board_text_height_change", (value) => {
-      this.textHeight = parseInt(value)
-      if (this.tool.toolType === TEXT) {
-        this.tool.resize()
-      }
-    })
+    eb.on("board_text_width_change", (value) => { this.textWidth = parseInt(value) })
+    eb.on("board_text_height_change", (value) => { this.textHeight = parseInt(value) })
     eb.on("board_font_size_change", (value) => {this.fontSize = parseInt(value)})
     eb.on("board_eraser_size_change", (value) => {this.eraserSize = parseInt(value)})
   }
@@ -133,10 +130,10 @@ class DrawBoard {
       for (var i = 1; i < h.curr; i++) {
         h.queue[i].execute()
       }
-      h.curr = next
     } else {
       this.mainCtx.clearRect(0, 0, this.W, this.H)
     }
+    h.curr = next
   }
 
   redo() {
@@ -147,6 +144,7 @@ class DrawBoard {
     for (var i = 1; i < h.curr + 1; i++) {
       h.queue[i].execute()
     }
+    log(h)
   }
 
   setupBackground() {

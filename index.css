@@ -209,6 +209,7 @@ header .delete-btn:hover {
 
 #drawboard_input {
   border: none;
+  outline: none;
 }
 
 .board-details-wrapper {
